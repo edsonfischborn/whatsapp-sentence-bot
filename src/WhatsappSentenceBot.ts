@@ -8,7 +8,7 @@ import { createSentenceImage, ImageInfo } from './createSentenceImage';
 /**
  * @author Édson Fischborn
  */
-export default class ZapBot {
+export default class WhatsappSentenceBot {
   public allowedContacts: string[];
 
   private _allowedContacts: WAWebJS.Contact[];
@@ -59,26 +59,39 @@ export default class ZapBot {
   };
 
   private onMessage = async (message: Message) => {
-    const msg = message.body;
+    await this.showReceivedMessage(message).catch(() =>
+      console.log('Talvez você tenha novas mensagens')
+    );
+
+    await this.replyWithSentenceImage(message).catch(() =>
+      console.log('Falha ao responder com imagem')
+    );
+  };
+
+  private showReceivedMessage = async (message: Message) => {
     const chat = await message.getChat();
 
     if (chat.isGroup) {
-      console.log(`${chat.name} - grupo: ${msg}`);
+      console.log(`${chat.name} - grupo: ${message.body}`);
     } else {
-      console.log(`${chat.name} - pv ${msg}`);
+      console.log(`${chat.name} - pv: ${message.body}`);
     }
+  };
+
+  private replyWithSentenceImage = async (message: Message) => {
+    const msg = message.body;
+    if (msg[0] != '"' || msg[msg.length - 1] != '"') return null;
 
     if (this._allowedContacts.find((c) => c.id._serialized === message.from)) {
-      if (msg[0] != '"' || msg[msg.length - 1] != '"') return;
-
-      const [data, base64] = (await this.getImage(msg)).split(',');
+      const [data, base64] = (await this.getSentenceImage(msg)).split(',');
       const mime = data.split(';')[0].substring(5);
       const media = new MessageMedia(mime, base64);
+
       message.reply(media);
     }
   };
 
-  private getImage = (text: string, images = this.images) => {
+  private getSentenceImage = (text: string, images = this.images) => {
     const index = Math.floor(Math.random() * images.length);
 
     if (text.length > 200) text = `${text.slice(0, 197)}..."`;

@@ -1,5 +1,5 @@
-import ZapBot from './ZapBot';
+import WhatsappSentenceBot from './WhatsappSentenceBot';
 
 const contactsAndGroups = ['John', 'group1'];
 
-new ZapBot(contactsAndGroups);
+new WhatsappSentenceBot(contactsAndGroups);
