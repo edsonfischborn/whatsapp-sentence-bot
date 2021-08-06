@@ -79,8 +79,17 @@ export default class WhatsappSentenceBot {
   };
 
   private replyWithSentenceImage = async (message: Message) => {
-    const msg = message.body;
-    if (msg[0] != '"' || msg[msg.length - 1] != '"') return null;
+    const allowedChars = ['"', '“', '”', "'"];
+    let msg = message.body;
+
+    if (
+      allowedChars.includes(msg[0]) &&
+      allowedChars.includes(msg[msg.length - 1])
+    ) {
+      msg = `"${msg.substring(1).slice(0, -1)}"`;
+    } else {
+      return null;
+    }
 
     if (this._allowedContacts.find((c) => c.id._serialized === message.from)) {
       const [data, base64] = (await this.getSentenceImage(msg)).split(',');
