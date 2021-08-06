@@ -21,10 +21,11 @@ enum AutoAlign {
 export async function createSentenceImage(
   image: ImageInfo,
   sentence: string,
-  author: string
+  author: string,
+  fontPath = JIMP.FONT_SANS_32_WHITE
 ) {
   const img = await JIMP.read(image.path);
-  const font = await JIMP.loadFont(JIMP.FONT_SANS_32_WHITE);
+  const font = await JIMP.loadFont(fontPath);
 
   img
     .resize(500, JIMP.AUTO)

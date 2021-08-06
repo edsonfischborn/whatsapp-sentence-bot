@@ -88,7 +88,7 @@ export default class WhatsappSentenceBot {
     ) {
       msg = `"${msg.substring(1).slice(0, -1)}"`;
     } else {
-      return null;
+      return;
     }
 
     if (this._allowedContacts.find((c) => c.id._serialized === message.from)) {
@@ -101,6 +101,7 @@ export default class WhatsappSentenceBot {
   };
 
   private getSentenceImage = (text: string, images = this.images) => {
+    const font = resolve('src', 'assets', 'fonts', 'yellow.fnt');
     const index = Math.floor(Math.random() * images.length);
 
     if (text.length > 200) text = `${text.slice(0, 197)}..."`;
@@ -112,14 +113,14 @@ export default class WhatsappSentenceBot {
       author = this.images[index].title;
     }
 
-    return createSentenceImage(this.images[index], text, author);
+    return createSentenceImage(this.images[index], text, author, font);
   };
 
   private getImages = () => {
     const images: ImageInfo[] = [];
 
-    readdirSync(resolve('src', 'assets')).forEach((file) => {
-      const path = resolve('src', 'assets', file);
+    readdirSync(resolve('src', 'assets', 'peoples-images')).forEach((file) => {
+      const path = resolve('src', 'assets', 'peoples-images', file);
       const [title, format] = file.split('.');
 
       images.push({
