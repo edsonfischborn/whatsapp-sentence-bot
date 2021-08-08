@@ -35,7 +35,7 @@ export async function createSentenceImage(
   print(img, font, `- ${author}`, AutoAlign.HRIGHT, AutoAlign.VBOTTOM);
   print(img, font, `${sentence}`, AutoAlign.HCENTER, AutoAlign.VCENTER);
 
-  return img.getBase64Async(JIMP.MIME_PNG);
+  return await img.getBase64Async(img.getMIME());
 }
 
 function print(
