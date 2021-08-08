@@ -1,5 +1,5 @@
 import { readdirSync } from 'fs';
-import { resolve } from 'path';
+import { resolve, parse } from 'path';
 import qrcodeTerminal from 'qrcode-terminal';
 import WAWebJS, { Client, Message, MessageMedia } from 'whatsapp-web.js';
 
@@ -83,6 +83,7 @@ export default class WhatsappSentenceBot {
     let msg = message.body;
 
     if (
+      msg.length >= 3 &&
       allowedChars.includes(msg[0]) &&
       allowedChars.includes(msg[msg.length - 1])
     ) {
@@ -117,11 +118,15 @@ export default class WhatsappSentenceBot {
   };
 
   private getImages = () => {
+    const validFormats: string[] = ['png', 'jpg', 'jpeg'];
     const images: ImageInfo[] = [];
 
     readdirSync(resolve('src', 'assets', 'peoples-images')).forEach((file) => {
       const path = resolve('src', 'assets', 'peoples-images', file);
-      const [title, format] = file.split('.');
+      let { name: title, ext: format } = parse(file);
+      format = format.substr(1);
+
+      if (!validFormats.includes(format)) return;
 
       images.push({
         title,
